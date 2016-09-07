@@ -1,5 +1,3 @@
-import com.sun.istack.internal.Nullable;
-
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -9,16 +7,13 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.io.*;
-import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
 
 public class MainFrame implements ListSelectionListener, KeyEventDispatcher{
     private ItemManager im  = new ItemManager();
@@ -29,8 +24,8 @@ public class MainFrame implements ListSelectionListener, KeyEventDispatcher{
     private JPanel attributePanel = new JPanel();
     private JPanel bottomPanel = new JPanel();
     private JLabel titleLabel = new JLabel();
-    private JList list = new JList();
-
+    private JList itemList = new JList();
+    private JTextField searchBox;
     private JTextField attFields[] = new JTextField[ItemInfo.attributes_size];
     private int currentAmending = 0;
     private Map<String,Component> components = new HashMap<String, Component>();
@@ -39,7 +34,31 @@ public class MainFrame implements ListSelectionListener, KeyEventDispatcher{
     private void createTopPanel() {
         JPanel searchPanel = new JPanel();
         JPanel titlePanel = new JPanel();
-        JTextField searchBox = new JTextField("검색",18);
+        searchBox = new JTextField("검색",18);
+        searchBox.getDocument().addDocumentListener(new DocumentListener() {
+            public void insertUpdate(DocumentEvent e) {
+
+                for(int i = 0; i < itemNames.size(); i++)
+                {
+                    if(itemNames.get(i).contains(searchBox.getText()))
+                    {
+                        itemList.ensureIndexIsVisible(i);
+                        itemList.updateUI();
+                        System.out.println(itemNames.get(i));
+                        break;
+                    }
+
+                }
+            }
+
+            public void removeUpdate(DocumentEvent e) {
+                itemList.updateUI();
+            }
+
+            public void changedUpdate(DocumentEvent e) {
+
+            }
+        });
         JButton searchButton = new JButton("검색");
         components.put("searchBox",searchBox);
         components.put("searchButton",searchButton);
@@ -68,14 +87,32 @@ public class MainFrame implements ListSelectionListener, KeyEventDispatcher{
         for(ItemInfo i : itemList){
             itemNames.add(i.getAttribute(ItemInfo.Attributes.ITEM_NAME));
         }
+        this.itemList = new JList(itemNames.toArray());
 
-        JScrollPane scrollPane = new JScrollPane();
-        list = new JList(itemNames.toArray());
-        list.addListSelectionListener(this);
-        list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        JScrollPane scrollPane = new JScrollPane(this.itemList);
+
+
+        this.itemList.addListSelectionListener(this);
+        this.itemList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         scrollPane.setPreferredSize(new Dimension(290,510));
-        scrollPane.setViewportView(list);
+        scrollPane.setViewportView(this.itemList);
+        this.itemList.setCellRenderer(new DefaultListCellRenderer(){
+            @Override
+            public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value instanceof String) {
+                    String item = (String) value;
+                    setText(item);
+                    if (item.contains(searchBox.getText()) && searchBox.getText().length() > 0) {
+                        setBackground(Color.GREEN);
+
+                    }
+                }
+
+                return c;
+            }
+        });
         searchListPanel.add(scrollPane);
 
     }
@@ -175,14 +212,14 @@ public class MainFrame implements ListSelectionListener, KeyEventDispatcher{
             case NO:
 
 
-                ii = im.getItmes().get(list.getSelectedIndex());
+                ii = im.getItmes().get(itemList.getSelectedIndex());
                 for (int l = 0; l < ItemInfo.attributes_size; l++)
                     attFields[l].setText(ii.getAttribute(l));
 
                 contextSaved = true;
-                titleLabel.setText(list.getSelectedValue().toString());
+                titleLabel.setText(itemList.getSelectedValue().toString());
                 titleLabel.setForeground(Color.BLACK);
-                currentAmending = list.getSelectedIndex();
+                currentAmending = itemList.getSelectedIndex();
                 break;
             case CANCLE:
 
