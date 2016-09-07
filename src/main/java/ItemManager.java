@@ -92,6 +92,8 @@ public class ItemManager {
         sb.append(item.getHealthPercentage()+",");
         sb.append(item.getMagicPercentage()+",");
         sb.append(item.getArmed()+",");
+        sb.append(item.getMagicDefencePower() +",");
+        sb.append(item.getRegeneration() + ",");
         sb.append(item.getsMinDamage()+",");
         sb.append(item.getsMaxDamage()+",");
         sb.append(item.getiMinDamage()+",");
