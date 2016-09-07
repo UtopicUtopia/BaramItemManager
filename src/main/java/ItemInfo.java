@@ -26,7 +26,7 @@ public class ItemInfo {
     private int damage;
     private int power;
     private int afility;
-    private int intellict;
+    private int intellect;
     private int health;
     private int magic;
     private int healthPercentage;
@@ -75,7 +75,7 @@ public class ItemInfo {
         damage=0;
         power=0;
         afility=0;
-        intellict=0;
+        intellect=0;
         health=0;
         magic=0;
         healthPercentage=0;
@@ -289,11 +289,11 @@ public class ItemInfo {
     }
 
     public int getIntellict() {
-        return intellict;
+        return intellect;
     }
 
-    public void setIntellict(int intellict) {
-        this.intellict = intellict;
+    public void setIntellict(int intellect) {
+        this.intellect = intellect;
     }
 
     public int getHealth() {
@@ -470,7 +470,7 @@ public class ItemInfo {
         if (damage != itemInfo.damage) return false;
         if (power != itemInfo.power) return false;
         if (afility != itemInfo.afility) return false;
-        if (intellict != itemInfo.intellict) return false;
+        if (intellect != itemInfo.intellect) return false;
         if (health != itemInfo.health) return false;
         if (magic != itemInfo.magic) return false;
         if (healthPercentage != itemInfo.healthPercentage) return false;
@@ -520,7 +520,7 @@ public class ItemInfo {
         result = 31 * result + damage;
         result = 31 * result + power;
         result = 31 * result + afility;
-        result = 31 * result + intellict;
+        result = 31 * result + intellect;
         result = 31 * result + health;
         result = 31 * result + magic;
         result = 31 * result + healthPercentage;
